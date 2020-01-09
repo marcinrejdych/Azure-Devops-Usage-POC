@@ -19,5 +19,6 @@ steps:
     jdkVersionOption: '1.8'
     jdkArchitectureOption: 'x64'
     publishJUnitResults: true
+    options: '-PazureRepoUsername=marcinrejdych'
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'build'
