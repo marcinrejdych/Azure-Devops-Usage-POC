@@ -10,17 +10,6 @@ version = "0.0.0"
 repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-        url 'https://pkgs.dev.azure.com/marcinrejdych/cff860a1-81a4-4215-a685-c462f3c21017/_packaging/maven-azure/maven/v1'
-        name 'maven-azure'
-        credentials  {
-            username = azureRepoUsername
-            password = azureRepoPassword
-        }
-        authentication {
-            basic(BasicAuthentication)
-        }
-    }
 }
 
 dependencies {
