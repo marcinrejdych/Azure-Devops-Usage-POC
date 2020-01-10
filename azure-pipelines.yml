@@ -18,10 +18,12 @@ steps:
   persistCredentials: true
 
 - task: Bash@3
+  displayName: "Bump Version"
   inputs:
     filePath: './ci/tasks/update-version/script.sh'
 
 - task: Gradle@2
+  displayName: "Build project and publish artifacts"
   inputs:
     gradleWrapperFile: 'gradlew'
     options: '-PazureRepoUsername=$(artifactsUsername) -PazureRepoPassword=$(artifactsPassword)'
@@ -36,5 +38,6 @@ steps:
     sonarQubeRunAnalysis: false
 
 - task: Bash@3
+  displayName: "Push bumped version"
   inputs:
     filePath: './ci/tasks/git-push/script.sh'
