@@ -4,7 +4,7 @@ plugins {
     id 'maven-publish'
     id 'jacoco'
     id "org.owasp.dependencycheck" version "5.2.4"
-    id "com.github.hierynomus.license" version"0.15.0"
+    id "com.github.hierynomus.license-report" version"0.15.0"
 }
 
 group = "io.relayr"
