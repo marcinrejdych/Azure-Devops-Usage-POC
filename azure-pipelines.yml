@@ -30,9 +30,6 @@ steps:
     jdkVersionOption: '1.11'
     gradleOptions: '-Xmx3072m'
     sonarQubeRunAnalysis: false
-    checkStyleRunAnalysis: true
-    findBugsRunAnalysis: true
-    pmdRunAnalysis: true
 
 - task: Bash@3
   inputs:
