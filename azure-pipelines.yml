@@ -34,7 +34,6 @@ steps:
 - task: Bash@3
   inputs:
     filePath: './ci/tasks/update-version/script.sh'
-    arguments: '$(gitUsername) $(gitPassword)'
 
 - task: Gradle@2
   inputs:
