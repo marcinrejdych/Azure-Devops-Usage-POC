@@ -2,6 +2,7 @@
 
 git config --global user.email "git@localhost"
 git config --global user.name "git"
+git status
 git checkout master
 
 VERSION=$(cat ./version)
@@ -34,4 +35,4 @@ git status
 git diff
 git add version
 git commit -m "[ci skip] Bumped version to ${VERSION}"
-git push
+git push origin
