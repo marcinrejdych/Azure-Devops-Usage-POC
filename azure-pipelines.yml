@@ -17,11 +17,15 @@ steps:
 - checkout: self
   persistCredentials: true
 
+- task: Bash@3
+  inputs:
+    filePath: './ci/tasks/update-version/script.sh'
+
 - task: Gradle@2
   inputs:
     gradleWrapperFile: 'gradlew'
     options: '-PazureRepoUsername=$(artifactsUsername) -PazureRepoPassword=$(artifactsPassword)'
-    tasks: 'build'
+    tasks: 'build publish'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
     testRunTitle: 'Unit tests'
@@ -33,15 +37,4 @@ steps:
 
 - task: Bash@3
   inputs:
-    filePath: './ci/tasks/update-version/script.sh'
-
-- task: Gradle@2
-  inputs:
-    gradleWrapperFile: 'gradlew'
-    options: '-PazureRepoUsername=$(artifactsUsername) -PazureRepoPassword=$(artifactsPassword)'
-    tasks: 'publish'
-    publishJUnitResults: false
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.11'
-    gradleOptions: '-Xmx3072m'
-    sonarQubeRunAnalysis: false
+    filePath: './ci/tasks/git-push/script.sh'

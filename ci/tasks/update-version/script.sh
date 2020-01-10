@@ -31,8 +31,5 @@ fi
 
 echo ${VERSION} > ./version
 
-git status
-git diff
 git add version
 git commit -m "[ci skip] Bumped version to ${VERSION}"
-git push origin
