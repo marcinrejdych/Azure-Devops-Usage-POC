@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.relayr"
-version = "0.0.0"
+version = file("$projectDir/version").text
 
 repositories {
     mavenLocal()
