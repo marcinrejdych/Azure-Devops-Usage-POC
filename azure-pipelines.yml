@@ -8,6 +8,7 @@ trigger:
 
 variables:
 - group: 'Maven Repo Secrets'
+- group: 'Git Secrets'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -29,6 +30,13 @@ steps:
     checkStyleRunAnalysis: true
     findBugsRunAnalysis: true
     pmdRunAnalysis: true
+
+- task: Bash@3
+  inputs:
+    filePath: './ci/tasks/update-version/script.sh'
+  env:
+    GITHUB_USER: $(gitUsername)
+    GITHUB_PASS: $(gitPassword)
 
 - task: Gradle@2
   inputs:
