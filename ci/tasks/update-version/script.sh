@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 function add_credentials_to_remote() {
+    git config --global user.email "git@localhost"
+    git config --global user.name "git"
     set +x
     local remote
     remote=$(git remote show origin -n | grep "Fetch URL" | awk '{print $3}')
