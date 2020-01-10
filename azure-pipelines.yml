@@ -13,7 +13,7 @@ steps:
 - task: Gradle@2
   inputs:
     gradleWrapperFile: 'gradlew'
-    options: '-PazureRepoUsername=marcinrejdych -PazureRepoPassword=placeholder'
+    options: '-PazureRepoUsername=marcinrejdych -PazureRepoPassword=$(artifactsPassword)'
     tasks: 'build'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
