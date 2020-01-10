@@ -4,6 +4,7 @@ function add_credentials_to_remote() {
     git config --global user.email "git@localhost"
     git config --global user.name "git"
     set +x
+    git checkout master
     local remote
     remote=$(git remote show origin -n | grep "Fetch URL" | awk '{print $3}')
     remote=$(echo ${remote} | sed 's|://|://'${GITHUB_USER}':'${GITHUB_PASS}'@|')
