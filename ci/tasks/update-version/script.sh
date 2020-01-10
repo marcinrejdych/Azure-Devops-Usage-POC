@@ -43,4 +43,4 @@ echo ${VERSION} > ./version
 
 git add version
 git commit -m "[ci skip] Bumped version to ${VERSION}"
-git push
+git push origin master
