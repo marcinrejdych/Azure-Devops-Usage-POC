@@ -1,16 +1,8 @@
 #!/usr/bin/env bash
 
-function add_credentials_to_remote() {
-    git config --global user.email "git@localhost"
-    git config --global user.name "git"
-    git checkout master
-    local remote
-    remote=$(git remote show origin -n | grep "Fetch URL" | awk '{print $3}')
-    remote=$(echo ${remote} | sed 's|://|://'${GIT_USER}':'${GIT_PASS}'@|')
-    git remote set-url origin ${remote}
-}
-
-add_credentials_to_remote
+git config --global user.email "git@localhost"
+git config --global user.name "git"
+git checkout master
 
 VERSION=$(cat ./version)
 if [[ -z "$VERSION" ]]; then
@@ -38,6 +30,8 @@ fi
 
 echo ${VERSION} > ./version
 
+git status
+git diff
 git add version
 git commit -m "[ci skip] Bumped version to ${VERSION}"
-git push origin master
+git push
