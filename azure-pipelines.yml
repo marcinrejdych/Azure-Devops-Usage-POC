@@ -52,6 +52,13 @@ stages:
         publishJUnitResults: false
         sonarQubeRunAnalysis: false
 
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'testRegistry'
+        repository: 'testapp'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
+
     - task: Bash@3
       displayName: "Push bumped version"
       inputs:
