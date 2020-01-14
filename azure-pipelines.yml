@@ -64,7 +64,7 @@ stages:
       inputs:
         filePath: './ci/tasks/git-push/script.sh'
 
-- stage: "Deploy dev"
+- stage: "DeployDev"
   jobs:
   - job: "DeployDev"
     steps:
