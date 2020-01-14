@@ -63,3 +63,13 @@ stages:
       displayName: "Push bumped version"
       inputs:
         filePath: './ci/tasks/git-push/script.sh'
+
+- stage: "Deploy dev"
+  jobs:
+  - job: "DeployDev"
+    steps:
+    - task: KubernetesManifest@0
+      inputs:
+        namespace: 'default'
+        action: 'deploy'
+        kubernetesServiceConnection: 'k8s-pipelines'
