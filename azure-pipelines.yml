@@ -6,6 +6,8 @@
 trigger:
 - master
 
+pr: none
+
 variables:
 - group: 'Maven Repo Secrets'
 - group: 'Git Secrets'
