@@ -63,6 +63,10 @@ tasks.register("dependencyCheckResults", Zip.class).configure {
     it.getDestinationDirectory().set(archivesDir)
 }
 
+tasks.named("build") {
+    dependsOn(tasks.named("installDist"))
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
