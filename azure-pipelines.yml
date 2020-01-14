@@ -1,8 +1,3 @@
-# Gradle
-# Build your Java project and run tests with Gradle using a Gradle wrapper script.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 trigger:
 - master
 
@@ -10,36 +5,54 @@ pr: none
 
 variables:
 - group: 'Maven Repo Secrets'
-- group: 'Git Secrets'
 
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- checkout: self
-  persistCredentials: true
+stages:
+- stage: Test
+  jobs:
+  - job: TestJob
+    steps:
+    - task: Gradle@2
+      displayName: "Test project and publish coverage info"
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        tasks: 'test'
+        publishJUnitResults: true
+        testResultsFiles: '**/TEST-*.xml'
+        testRunTitle: 'Unit tests'
+        codeCoverageToolOption: 'JaCoCo'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.11'
+        gradleOptions: '-Xmx3072m'
+        sonarQubeRunAnalysis: false
 
-- task: Bash@3
-  displayName: "Bump Version"
-  inputs:
-    filePath: './ci/tasks/update-version/script.sh'
+- stage: Publish
+  jobs:
+  - job: PublishJob
+    steps:
+    - checkout: self
+      persistCredentials: true
 
-- task: Gradle@2
-  displayName: "Build project and publish artifacts"
-  inputs:
-    gradleWrapperFile: 'gradlew'
-    options: '-PazureRepoUsername=$(artifactsUsername) -PazureRepoPassword=$(artifactsPassword)'
-    tasks: 'build publish'
-    publishJUnitResults: true
-    testResultsFiles: '**/TEST-*.xml'
-    testRunTitle: 'Unit tests'
-    codeCoverageToolOption: 'JaCoCo'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.11'
-    gradleOptions: '-Xmx3072m'
-    sonarQubeRunAnalysis: false
+    - task: Bash@3
+      displayName: "Bump Version"
+      inputs:
+        filePath: './ci/tasks/update-version/script.sh'
 
-- task: Bash@3
-  displayName: "Push bumped version"
-  inputs:
-    filePath: './ci/tasks/git-push/script.sh'
+    - task: Gradle@2
+      displayName: "Build project and publish artifacts"
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        options: '-PazureRepoUsername=$(artifactsUsername) -PazureRepoPassword=$(artifactsPassword)'
+        tasks: 'build publish'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.11'
+        gradleOptions: '-Xmx3072m'
+        publishJUnitResults: false
+        sonarQubeRunAnalysis: false
+
+    - task: Bash@3
+      displayName: "Push bumped version"
+      inputs:
+        filePath: './ci/tasks/git-push/script.sh'
