@@ -1,28 +1,131 @@
-# Gradle
-# Build your Java project and run tests with Gradle using a Gradle wrapper script.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 trigger:
 - master
+
+pr: none
+
+variables:
+- group: 'Maven Repo Secrets'
+- name: 'dockerRegistryServiceConnection'
+  value: '20a12e97-bbaa-45b4-900a-1f7bc146a3ef'
+- name: 'imageRepository'
+  value: 'azuredevopsusagepoc'
+- name: 'containerRegistry'
+  value: 'mrejdychcontainerregistry.azurecr.io'
+- name: 'dockerfilePath'
+  value: '**/Dockerfile'
+- name: 'tag'
+  value: '$(Build.BuildId)'
+- name: 'imagePullSecret'
+  value: 'mrejdychcontainerregistrybc58-auth'
 
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: Gradle@2
-  inputs:
-    gradleWrapperFile: 'gradlew'
-    options: '-PazureRepoUsername=$(artifactsUsername) -PazureRepoPassword=$(artifactsPassword)'
-    tasks: 'build'
-    publishJUnitResults: true
-    testResultsFiles: '**/TEST-*.xml'
-    testRunTitle: 'Unit tests'
-    codeCoverageToolOption: 'JaCoCo'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.11'
-    gradleOptions: '-Xmx3072m'
-    sonarQubeRunAnalysis: false
-    checkStyleRunAnalysis: true
-    findBugsRunAnalysis: true
-    pmdRunAnalysis: true
+stages:
+- stage: Test
+  jobs:
+  - job: TestJob
+    steps:
+    - task: Gradle@2
+      displayName: "Test project and publish coverage info"
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        tasks: 'test'
+        publishJUnitResults: true
+        testResultsFiles: '**/TEST-*.xml'
+        testRunTitle: 'Unit tests'
+        codeCoverageToolOption: 'JaCoCo'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.11'
+        gradleOptions: '-Xmx3072m'
+        sonarQubeRunAnalysis: false
+
+- stage: Publish
+  jobs:
+  - job: PublishJob
+    steps:
+    - checkout: self
+      persistCredentials: true
+
+    - task: Bash@3
+      displayName: "Bump Version"
+      inputs:
+        filePath: './ci/tasks/update-version/script.sh'
+
+    - task: Gradle@2
+      displayName: "Build project and publish artifacts"
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        options: '-PazureRepoUsername=$(artifactsUsername) -PazureRepoPassword=$(artifactsPassword)'
+        tasks: 'build publish'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.11'
+        gradleOptions: '-Xmx3072m'
+        publishJUnitResults: false
+        sonarQubeRunAnalysis: false
+
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+
+    - task: Bash@3
+      displayName: "Push bumped version"
+      inputs:
+        filePath: './ci/tasks/git-push/script.sh'
+
+    - upload: manifests
+      artifact: manifests
+
+- stage: DeployDev
+  displayName: Deploy Dev
+  dependsOn: Publish
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    environment: 'AKS DEV'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: |
+                $(Pipeline.Workspace)/manifests/deployment.yml
+                $(Pipeline.Workspace)/manifests/service.yml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
+
+
+- stage: DeployStaging
+  displayName: Deploy Staging
+  dependsOn: DeployDev
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    environment: 'Azure Web App Container Staging'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebAppContainer@1
+            inputs:
+              azureSubscription: 'edgemgmt-dev.relayr.io (1ad95744-3c1c-4557-a7c1-dc3e74063235)'
+              appName: 'mrejdych-webapp-pipelines'
+              containers: '$(containerRegistry)/$(imageRepository):$(tag)'

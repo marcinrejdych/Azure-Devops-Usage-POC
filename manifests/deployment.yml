@@ -1,0 +1,16 @@
+apiVersion : apps/v1beta1
+kind: Deployment
+metadata:
+  name: azuredevopsusagepoc 
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: azuredevopsusagepoc 
+    spec:
+      containers:
+        - name: azuredevopsusagepoc 
+          image: mrejdychcontainerregistry.azurecr.io/azuredevopsusagepoc
+          ports:
+          - containerPort: 19999

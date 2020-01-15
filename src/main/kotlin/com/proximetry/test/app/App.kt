@@ -1,5 +1,8 @@
 package com.proximetry.test.app
 
+import spark.Spark.get
+import spark.Spark.port
+
 class App {
     val greeting: String
         get() {
@@ -8,5 +11,9 @@ class App {
 }
 
 fun main(args: Array<String>) {
-    println(App().greeting)
+    port(19999)
+
+    get("/hello") { _, _ ->
+        App().greeting
+    }
 }
