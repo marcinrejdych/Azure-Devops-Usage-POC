@@ -70,6 +70,7 @@ stages:
     steps:
     - task: KubernetesManifest@0
       inputs:
-        namespace: 'default'
         action: 'deploy'
         kubernetesServiceConnection: 'k8s-pipelines'
+        namespace: 'default'
+        manifests: 'manifest.yaml'
