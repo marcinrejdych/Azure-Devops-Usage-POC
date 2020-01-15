@@ -88,7 +88,7 @@ stages:
   jobs:
   - deployment: Deploy
     displayName: Deploy
-    environment: 'AzureDevopsUsagePOC-5197.default'
+    environment: 'AKS DEV'
     strategy:
       runOnce:
         deploy:
@@ -113,3 +113,19 @@ stages:
                 $(containerRegistry)/$(imageRepository):$(tag)
 
 
+- stage: DeployStaging
+  displayName: Deploy Staging
+  dependsOn: DeployDev
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    environment: 'Azure Web App Container Staging'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebAppContainer@1
+            inputs:
+              azureSubscription: 'edgemgmt-dev.relayr.io (1ad95744-3c1c-4557-a7c1-dc3e74063235)'
+              appName: 'mrejdych-webapp-pipelines'
+              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
