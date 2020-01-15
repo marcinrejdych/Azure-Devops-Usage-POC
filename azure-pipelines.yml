@@ -82,8 +82,8 @@ stages:
     - upload: manifests
       artifact: manifests
 
-- stage: Deploy
-  displayName: Deploy stage
+- stage: DeployDev
+  displayName: Deploy Dev
   dependsOn: Publish
   jobs:
   - deployment: Deploy
@@ -111,3 +111,5 @@ stages:
                 $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
+
+
