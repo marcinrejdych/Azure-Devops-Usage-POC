@@ -4,12 +4,13 @@
 <head>
     <title>Test application</title>
     <style>
-        body {
-            background-color: #f5f5dc;
-            animation: colorChange 2s alternate infinite;
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #fffff0;
         }
 
-        @keyframes colorChange {
+        @keyframes opacityChange {
             to {
                 opacity: 0;
             }
@@ -18,10 +19,47 @@
             }
         }
 
+        @keyframes slide {
+            0% {
+                opacity: 0;
+                padding-left: 0%;
+                padding-top: 0%;
+            }
+            50% {
+                opacity: 0.08;
+                padding-left:35%;
+                padding-top:20%;
+            }
+            75% {
+                opacity: 0;
+                padding-left:0%;
+                padding-top:30%;
+            }
+            100% {
+                opacity: 0;
+                padding-left: 0%;
+                padding-top: 0%;
+            }
+        }
+
+        #first {
+            animation: opacityChange 2s alternate infinite;
+        }
+
+        #second {
+            opacity: 0;
+            padding-left:-30%;
+            padding-top:-30%;
+            animation: slide 4s alternate infinite;
+        }
+
         p {
+            font-size: 80px;
+        }
+
+        p.text {
             margin: 0;
             position: absolute;
-            font-size: 80px;
             top: 50%;
             left: 50%;
             margin-right: -50%;
@@ -30,10 +68,18 @@
 
 
     </style>
+    <meta charset="UTF-8">
 </head>
 <body>
+<div id="first">
 <center>
-    <p>Frontend <strong>fajny</strong> bardzo.</p>
+    <p class="text">Frontend <strong>fajny</strong> bardzo.</p>
 </center>
+</div>
+<div id="second">
+    <center>
+        <p>CSS wszedł <strong>mocno</strong>.</p>
+    </center>
+</div>
 </body>
 </html>
