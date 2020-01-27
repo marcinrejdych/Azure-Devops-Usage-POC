@@ -87,46 +87,46 @@ stages:
   displayName: Deploy Dev
   dependsOn: Publish
   jobs:
-  - deployment: Deploy
-    displayName: Deploy
-    environment: 'AKS DEV'
+  - deployment: DeployDev
+    displayName: Deploy to Azure Web App Container dev setup
+    environment: 'Azure Web App Container Dev'
     strategy:
       runOnce:
         deploy:
           steps:
-          - task: KubernetesManifest@0
-            displayName: Create imagePullSecret
-            inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
-          - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster
-            inputs:
-              action: deploy
-              manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
+            - task: AzureWebAppContainer@1
+              inputs:
+                azureSubscription: 'edgemgmt-dev.relayr.io (1ad95744-3c1c-4557-a7c1-dc3e74063235)'
+                appName: 'mrejdych-webapp-pipelines'
+                containers: '$(containerRegistry)/$(imageRepository):$(tag)'
 
 
 - stage: DeployStaging
   displayName: Deploy Staging
   dependsOn: DeployDev
   jobs:
-  - deployment: Deploy
-    displayName: Deploy
-    environment: 'Azure Web App Container Staging'
+  - deployment: DeployStaging
+    displayName: Deploy to Kubernetes staging setup
+    environment: 'Kubernetes staging'
     strategy:
       runOnce:
         deploy:
           steps:
-          - task: AzureWebAppContainer@1
-            inputs:
-              azureSubscription: 'edgemgmt-dev.relayr.io (1ad95744-3c1c-4557-a7c1-dc3e74063235)'
-              appName: 'mrejdych-webapp-pipelines'
-              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+            - task: KubernetesManifest@0
+              displayName: Create imagePullSecret
+              inputs:
+                action: createSecret
+                secretName: $(imagePullSecret)
+                dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+            - task: KubernetesManifest@0
+              displayName: Deploy to Kubernetes cluster
+              inputs:
+                action: deploy
+                manifests: |
+                  $(Pipeline.Workspace)/manifests/deployment.yml
+                  $(Pipeline.Workspace)/manifests/service.yml
+                imagePullSecrets: |
+                  $(imagePullSecret)
+                containers: |
+                  $(containerRegistry)/$(imageRepository):$(tag)
