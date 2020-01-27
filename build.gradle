@@ -90,10 +90,10 @@ publishing {
                 classifier "test_results_archive"
                 extension "zip"
             }
-            artifact(dependencyCheckResults) {
-                classifier "OWASP-dependency-check-report"
-                extension "zip"
-            }
+//            artifact(dependencyCheckResults) {
+//                classifier "OWASP-dependency-check-report"
+//                extension "zip"
+//            }
             artifact(archiveCoverageResults) {
                 classifier "coverage_archive"
                 extension "zip"

@@ -25,6 +25,7 @@ stages:
 - stage: Test
   jobs:
   - job: TestJob
+    displayName: Run unit tests
     steps:
     - task: Gradle@2
       displayName: "Test project and publish coverage info"
@@ -44,6 +45,7 @@ stages:
 - stage: Publish
   jobs:
   - job: PublishJob
+    displayName: Publish artifacts
     steps:
     - checkout: self
       persistCredentials: true
