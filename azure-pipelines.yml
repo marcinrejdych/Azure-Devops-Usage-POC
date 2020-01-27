@@ -109,7 +109,7 @@ stages:
   jobs:
   - deployment: DeployStaging
     displayName: Deploy to Kubernetes staging setup
-    environment: 'Kubernetes staging'
+    environment: 'Kubernetes staging.default'
     strategy:
       runOnce:
         deploy:
