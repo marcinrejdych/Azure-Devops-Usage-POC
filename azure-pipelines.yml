@@ -30,6 +30,7 @@ stages:
       displayName: "Test project and publish coverage info"
       inputs:
         gradleWrapperFile: 'gradlew'
+        options: '-PazureRepoUsername=$(artifactsUsername) -PazureRepoPassword=$(artifactsPassword)'
         tasks: 'test'
         publishJUnitResults: true
         testResultsFiles: '**/TEST-*.xml'
