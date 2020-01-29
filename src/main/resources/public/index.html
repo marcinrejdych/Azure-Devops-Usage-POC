@@ -29,29 +29,6 @@
             }
         }
 
-        @keyframes slide {
-            0% {
-                opacity: 0;
-                padding-left: 0%;
-                padding-top: 0%;
-            }
-            50% {
-                opacity: 0.8;
-                padding-left:35%;
-                padding-top:20%;
-            }
-            75% {
-                opacity: 0;
-                padding-left:0%;
-                padding-top:30%;
-            }
-            100% {
-                opacity: 0;
-                padding-left: 0%;
-                padding-top: 0%;
-            }
-        }
-
         @keyframes invertedSlide {
             0% {
                 opacity: 0;
@@ -79,14 +56,6 @@
             animation: opacityChange 2s alternate infinite;
         }
 
-        #second {
-            position: absolute;
-            opacity: 0;
-            padding-left:-30%;
-            padding-top:-30%;
-            animation: slide 4s alternate infinite;
-        }
-
         #third {
             position: relative;
             opacity: 0;
@@ -105,7 +74,7 @@
         }
 
         #rickface {
-            animation: rickFades 4s alternate infinite 5s;
+            animation: rickFades 4s alternate infinite 3s;
             float: right;
             opacity: 0;
             height: 15%;
@@ -122,17 +91,8 @@
     <p class="text">Frontend <strong>fajny</strong> bardzo.</p>
 </center>
 </div>
-<div id="second">
-    <center>
-        <p>CSS siadł <strong>mocno</strong>.</p>
-    </center>
-</div>
 
-<div id="third">
-    <center>
-        <p>JavaScript <strong>free</strong>.</p>
-    </center>
-</div>
+<div id="third"></div>
 
 <img id="rickface" src="rick.png" alt="dsd">
 </body>
